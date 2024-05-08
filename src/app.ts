@@ -1,11 +1,13 @@
-import express from "express";
-import productRoutes from './routes/productRoutes'; 
+import express from "express"; 
 import { connectToDatabase } from './config/database';
+import productRoutes from './routes/productRoutes';
+import categoryRoutes from './routes/categoryRoutes';
 
 const app = express();
 app.use(express.json());
 
 app.use('/api', productRoutes);
+app.use('/api', categoryRoutes);
 
 connectToDatabase()
 
