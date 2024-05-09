@@ -5,8 +5,8 @@ const productSchema = new mongoose.Schema({
     price: { type: Number, required: true },
     categories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
     inventory: {
-        count: { type: Number, required: true },
-        status: { type: String, required: true, enum: ['In Stock', 'Out of Stock', 'Discontinued'] }
+        count: { type: Number, required: true, default: 1 },
+        status: { type: String, required: true, default: 'In Stock', enum: ['In Stock', 'Out of Stock', 'Discontinued'] }
     }
 }, { timestamps: true });
 

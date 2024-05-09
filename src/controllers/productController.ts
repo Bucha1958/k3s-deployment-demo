@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { ProductData } from '../types/products.types';
+import { ProductData, inventoryUpdateRequest } from '../types/products.types';
+import { Inventory } from '../types/products.types';
 import { Product } from '../models/products';
 import { Category } from '../models/category'
 
@@ -7,11 +8,11 @@ import { Category } from '../models/category'
 export const createProduct = async (req: Request, res: Response) => {
     try {
         // Extracting information from req.body
-        const { name, price, categories, inventory }: ProductData = req.body;
+        const { name, price, categories, initialInventory }: ProductData = req.body;
 
 
         // Validation (simple example, consider using a library like Joi for complex validations)
-        if (!name || !price || !inventory || inventory.count === undefined || !inventory.status) {
+        if (!name || !price || !initialInventory || initialInventory.count === undefined || !initialInventory.status) {
             return res.status(400).json({ message: "All required fields must be filled" });
         }
 
@@ -34,7 +35,10 @@ export const createProduct = async (req: Request, res: Response) => {
             name,
             price,
             categories: validCategoryIds,
-            inventory,
+            inventory: {
+                count: initialInventory.count || 1,
+                status: initialInventory.count > 0 ? 'In Stock' : 'Out of Stock'
+            },
         });
 
         // Save the product to the database
@@ -42,11 +46,34 @@ export const createProduct = async (req: Request, res: Response) => {
 
         // Send a response back to the client
         res.status(201).json({ message: "Product created successfully", product });
-    } catch (error: any) {
+    } catch (error) {
         console.error('Failed to create the product:', error);
-        res.status(500).json({ message: "Failed to create product", error: error.message });
+        res.status(500).json({ message: "Failed to create product", error: (error as Error).message });
     }
     
+};
+
+// Update Inventory on Sale
+
+export const inventoryUpdateOnProduct = async (req: inventoryUpdateRequest, res: Response) => {
+    const { quantity } = req.body as { quantity: number }
+
+    try {
+        const product = await Product.findById(req.params.productId);
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+        if (product?.inventory?.count) {
+            product.inventory.count -= quantity;
+            product.inventory.status = product.inventory.count > 0 ? 'In Stock' : 'Out of Stock';
+        }
+       
+        await product.save();
+        res.status(200).json({ message: "Inventory updated successfully", product });
+    } catch (error) {
+        console.error('Error updating inventory:', error);
+        res.status(500).json({ message: "Failed to update inventory", error: (error as Error).message });
+    }
 };
 
 
