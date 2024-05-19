@@ -11,7 +11,7 @@ export const createProduct = async (req: Request, res: Response) => {
         const { name, price, categories, initialInventory }: ProductData = req.body;
 
 
-        // Validation (simple example, consider using a library like Joi for complex validations)
+        // Validation
         if (!name || !price || !initialInventory || initialInventory.count === undefined || !initialInventory.status) {
             return res.status(400).json({ message: "All required fields must be filled" });
         }
@@ -53,8 +53,25 @@ export const createProduct = async (req: Request, res: Response) => {
     
 };
 
-// Update Inventory on Sale
+// get all products
 
+export const getProduct = async (req: Request, res: Response) => {
+    try {
+        // All products
+
+        // Fetch all products from collection
+        const allProducts = await Product.find()
+                .select('name categories price inventory')
+                .populate('categories', 'name');
+        // Send all the list product as a JSON
+        res.json(allProducts);
+    } catch (error) {
+        console.error('Failed to list product:', error);
+        res.status(500).json({ message: "Failed to list product", error: (error as Error).message})
+    }
+}
+
+// Update Inventory on Sale
 export const inventoryUpdateOnProduct = async (req: inventoryUpdateRequest, res: Response) => {
     const { quantity } = req.body as { quantity: number }
 
