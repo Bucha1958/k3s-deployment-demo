@@ -1,7 +1,8 @@
 import express from "express";
-import { createRouteHandler } from "uploadthing/express";
-import { uploadRouter } from "./uploadthing";
 import cors from "cors";
+import { upload } from './config/multerConfig';
+import uploadRoutes from './routes/routeUpload';
+
 
 
 import { connectToDatabase } from './config/database';
@@ -13,14 +14,9 @@ app.use(express.json());
 app.use(cors());
 app.use('/api', productRoutes);
 app.use('/api', categoryRoutes);
+app.use('/api', uploadRoutes);
 
-app.use(
-    "/api/uploadthing",
-    createRouteHandler({
-        router: uploadRouter,
-        config: {},
-    })
-);
+  
   
 connectToDatabase()
 
