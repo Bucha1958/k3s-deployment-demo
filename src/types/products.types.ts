@@ -10,6 +10,7 @@ export interface ProductData {
     price: number;
     categories: string[];
     initialInventory: Inventory;
+    images: String[];
 }
 
 export interface inventoryUpdateRequest extends Request {

@@ -7,7 +7,8 @@ const productSchema = new mongoose.Schema({
     inventory: {
         count: { type: Number, required: true, default: 1 },
         status: { type: String, required: true, default: 'In Stock', enum: ['In Stock', 'Out of Stock', 'Discontinued'] }
-    }
+    },
+    images: {type: [String], required: true},
 }, { timestamps: true });
 
 export const Product = mongoose.model('Product', productSchema);

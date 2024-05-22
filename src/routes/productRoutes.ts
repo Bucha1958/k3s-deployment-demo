@@ -5,13 +5,17 @@ import {
     getProducts,
     getProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    createProductWithImages
 } from '../controllers/productController';
 
 const router = express.Router();
 
+// Create product with image
+router.post('/product', createProductWithImages);
+
 // Create product
-router.post('/product', createProduct);
+// router.post('/product', createProduct);
 
 // Get all products
 router.get('/products', getProducts);
