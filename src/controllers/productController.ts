@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { v2 as cloudinary } from 'cloudinary';
 import { ProductData, inventoryUpdateRequest } from '../types/products.types';
 import { Product } from '../models/products';
 import { Category } from '../models/category'
@@ -159,7 +160,7 @@ export const getProducts = async (req: Request, res: Response) => {
 
         // Fetch all products from collection
         const allProducts = await Product.find()
-                .select('name categories price inventory')
+                .select('name categories price inventory images')
                 .populate('categories', 'name');
         // Send all the list product as a JSON
         res.json(allProducts);
@@ -191,7 +192,9 @@ export const getProduct = async (req: Request, res: Response) => {
 
 // Update a product name
 
-export const updateProduct = async (req: Request, res: Response) => {
+export const updateProduct = [
+    upload.array('images', 2),
+    async (req: Request, res: Response) => {
     try {
         const { productId } = req.params;
         const { name, price, categories, initialInventory }: ProductData = req.body;
@@ -237,6 +240,23 @@ export const updateProduct = async (req: Request, res: Response) => {
             }
         }
 
+        // Handle image updates
+
+        if (req.files && (req.files as Express.Multer.File[]).length > 0) {
+            // Delete old images from cloudinary
+            if (productFound.images && productFound.images.length > 0) {
+                for (const url of productFound.images) {
+                    console.log(url);
+                    const publicId = url.split('/').pop()?.split('.')[0]; // public Id
+                    await cloudinary.uploader.destroy(`ecommerce-images/${publicId}`)
+                }
+            }
+             // upload new images to cloudinary
+            const imageUrls = (req.files as Express.Multer.File[]).map(file => (file as any).path);
+            productFound.images = imageUrls;
+        
+        }
+
         // Save the updated product
         const updatedProduct = await productFound.save();
 
@@ -244,7 +264,9 @@ export const updateProduct = async (req: Request, res: Response) => {
     } catch (error) {
         res.status(500).json({ message: "Internal server error", error: (error as Error).message });
     }
-}
+}];
+
+
 
 // Delete a product
 
