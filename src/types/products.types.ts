@@ -22,4 +22,10 @@ export interface inventoryUpdateRequest extends Request {
     }
 }
 
+export interface User {
+    username: string;
+    email: string;
+    password: string;
+}
+
 export type InventoryStatus = 'In Stock' | 'Out of Stock';
