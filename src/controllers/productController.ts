@@ -246,7 +246,6 @@ export const updateProduct = [
             // Delete old images from cloudinary
             if (productFound.images && productFound.images.length > 0) {
                 for (const url of productFound.images) {
-                    console.log(url);
                     const publicId = url.split('/').pop()?.split('.')[0]; // public Id
                     await cloudinary.uploader.destroy(`ecommerce-images/${publicId}`)
                 }
@@ -278,6 +277,17 @@ export const deleteProduct = async (req: Request, res: Response) => {
 
         if (!productFound) {
             return res.status(404).json({message: `product with this id ${productId} not found`});
+        }
+
+        // delete images from cloudinary
+        if (productFound.images && productFound.images.length > 0) {
+            for (const url of productFound.images) {
+                const filename = url.split('/').pop();
+                const publicId = filename?.split('.')[0];
+                if (publicId) {
+                    await cloudinary.uploader.destroy(`ecommerce-images/${publicId}`);
+                }
+            }
         }
         // deleted successfully
         await Product.findByIdAndDelete(productId);
