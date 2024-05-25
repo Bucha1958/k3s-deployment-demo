@@ -57,6 +57,10 @@ export const loginUser = async (req: Request, res: Response) => {
 
         const token = jwt.sign({ id: userDoc._id, email: userDoc.email}, secret, { expiresIn: '1h'});
 
+        console.log(token);
+
+        res.setHeader('Authorization', `Bearer ${token}`);
+
         res.status(200).json({ message: "Successfully logged in", token });
 
     } catch (error) {
