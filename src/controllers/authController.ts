@@ -18,16 +18,27 @@ if (!secret) {
 
 export const registerUser = async (req: Request, res: Response) => {
     const { username, email, password }: User = req.body;
-
-    // validation check
+// validation check
     if (!username || !email || !password) {
-        res.status(400).json({ message: " username, email and password are required"});
+        return res.status(400).json({ message: "Username, email, and password are required" });
     }
+
     try {
-        const hashedPassword = bcrypt.hash(password, 10);
+        // Check if the email is already registered
+        const existingUser = await UserModal.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: "Email is already registered" });
+        }
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create the user
         const userDoc = await UserModal.create({ username, email, password: hashedPassword });
-        res.status(201).json({ message: "Registered successfully", userDoc })
+
+        res.status(201).json({ message: "Registered successfully", userDoc });
     } catch (error) {
+        console.error("Error during user registration:", error); // Log the error
         res.status(500).json({ message: "Internal server error", error: (error as Error).message });
     }
 };
@@ -35,35 +46,45 @@ export const registerUser = async (req: Request, res: Response) => {
 
 export const loginUser = async (req: Request, res: Response) => {
     const { email, password }: User = req.body;
-
+  
     // Check if both email and password are provided
     if (!email || !password) {
         return res.status(400).json({ message: "Email and password are required" });
     }
-
+  
     try {
         const userDoc = await UserModal.findOne({ email });
-        
-        // Check if user document is found
+  
+      // Check if user document is found
         if (!userDoc) {
-            return res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ message: "Email address does not exist" });
         }
-
+  
         const passOk = await bcrypt.compare(password, userDoc.password);
-
+  
         if (!passOk) {
-            res.status(401).json({ message: "Invalid credentials" });
+            return res.status(401).json({ message: "Invalid password" });
+        } else {
+            jwt.sign({ id: userDoc._id, email: userDoc.email}, secret, {}, (err, token) => {
+                if (err) throw err;
+                res.cookie('token', token).json({
+                    id:userDoc._id,
+                    email,
+                });
+            });
         }
-
-        const token = jwt.sign({ id: userDoc._id, email: userDoc.email}, secret, { expiresIn: '1h'});
-
-        console.log(token);
-
-        res.setHeader('Authorization', `Bearer ${token}`);
-
-        res.status(200).json({ message: "Successfully logged in", token });
-
+  
     } catch (error) {
-        res.status(500).json({ message: "Internal server error", error: (error as Error).message });
+      return res.status(500).json({ message: "Internal server error", error: (error as Error).message });
     }
-}
+};
+
+export const profileUser = async (req: Request, res: Response) => {
+    const { token } = req.cookies;
+    jwt.verify(token, secret, {}, (err, info) => {
+      if (err) return res.status(401).json({ message: 'Unauthorized' });
+      res.json(info);
+    });
+  };
+  
+  

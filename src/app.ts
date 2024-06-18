@@ -1,6 +1,6 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
-import { upload } from './config/multerConfig';
+import cookieParser from 'cookie-parser';
 import uploadRoutes from './routes/routeUpload';
 
 
@@ -12,11 +12,22 @@ import authRoutes from "./routes/authRoutes";
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type,Authorization'
+}));
+app.use(cookieParser());
 app.use('/api', productRoutes);
 app.use('/api', categoryRoutes);
 app.use('/api', uploadRoutes);
 app.use('/api', authRoutes);
+
+// User logout endpoint
+app.post('/api/logout', (req: Request, res: Response) => {
+    res.cookie('token', '').json('ok');
+})
 
   
   
