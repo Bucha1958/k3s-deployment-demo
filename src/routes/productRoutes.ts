@@ -1,19 +1,19 @@
 import express from 'express';
 import { 
     createProduct, 
-    inventoryUpdateOnProduct, 
     getProducts,
     getProduct,
     updateProduct,
     deleteProduct,
     createProductWithImages
 } from '../controllers/productController';
+
 import { authenticateToken } from '../middleware';
 
 const router = express.Router();
 
 // Create product with image
-router.post('/product', authenticateToken, createProductWithImages);
+router.post('/product', createProductWithImages);
 
 // Create product
 // router.post('/product', createProduct);
@@ -25,13 +25,13 @@ router.get('/products', getProducts);
 router.get('/products/:productId', getProduct);
 
 // Update a product
-router.put('/products/:productId', authenticateToken, updateProduct);
+router.put('/products/:productId', updateProduct);
 
 // Delete a product
-router.delete('/products/:productId', authenticateToken, deleteProduct);
+router.delete('/products/:productId',  deleteProduct);
 
 // Update product on sell endpoint
 
-router.post('/products/:productId/sell', authenticateToken, inventoryUpdateOnProduct);
+// router.post('/products/:productId/sell', authenticateToken, inventoryUpdateOnProduct);
 
 export default router;

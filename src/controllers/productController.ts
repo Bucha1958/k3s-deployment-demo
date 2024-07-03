@@ -7,62 +7,17 @@ import mongoose from 'mongoose';
 import { upload } from '../config/multerConfig';
 
 // Controller for product creation and image upload
-// export const createProductWithImages = [
-//     upload.array('images', 2),
-//     async (req: Request, res: Response) => {
-//         try {
-//             const { name, price, categories, initialInventory }: ProductData = req.body;
-
-//             if (!name || !price || !initialInventory || initialInventory.count === undefined || !initialInventory.status) {
-//                 return res.status(400).json({ message: "All required fields must be filled" });
-//             }
-
-//             const categoryIds = await Promise.all(
-//                 categories.map(async (categoryName) => {
-//                     const category = await Category.findOne({ name: categoryName });
-//                     return category ? category._id : null;
-//                 })
-//             );
-    
-//             // Filter null IDs (categories not found)
-//             const validCategoryIds = categoryIds.filter(id => id !== null);
-    
-//             if (validCategoryIds.length === 0) {
-//                 return res.status(400).json({ message: "No valid categories found" });
-//             }
-    
-
-//             if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
-//                 return res.status(400).json({ message: 'Images are required' });
-//             }
-
-//             const imageUrls = (req.files as Express.Multer.File[]).map(file => (file as any).path);
-
-//             const newProduct = new Product({
-//                 name,
-//                 price,
-//                 categories: validCategoryIds,
-//                 initialInventory,
-//                 images: imageUrls,
-//             });
-
-//             const savedProduct = await newProduct.save();
-//             res.status(201).json({ message: 'Product created successfully', product: savedProduct });
-//         } catch (error) {
-//             res.status(500).json({ message: 'Internal server error', error: (error as Error).message });
-//         }
-//     }
-// ];
 
 
 export const createProductWithImages = [
-    upload.array('images', 2),
+    upload.array('images', 5),
     async (req: Request, res: Response) => {
         try {
-            const { name, price, initialInventory }: ProductData = req.body;
+
+            const { name, price }: ProductData = req.body;
             const categories = JSON.parse(req.body.categories);
 
-            if (!name || !price || !initialInventory || initialInventory.count === undefined || !initialInventory.status) {
+            if (!name || !price) {
                 return res.status(400).json({ message: "All required fields must be filled" });
             }
 
@@ -91,17 +46,18 @@ export const createProductWithImages = [
                 name,
                 price,
                 categories: validCategoryIds,
-                initialInventory,
                 images: imageUrls,
             });
 
             const savedProduct = await newProduct.save();
             res.status(201).json({ message: 'Product created successfully', product: savedProduct });
         } catch (error) {
+            console.error('Error:', error);
             res.status(500).json({ message: 'Internal server error', error: (error as Error).message });
         }
     }
 ];
+
 
 // Controller to create a new product
 export const createProduct = async (req: Request, res: Response) => {
@@ -156,19 +112,35 @@ export const createProduct = async (req: Request, res: Response) => {
 
 export const getProducts = async (req: Request, res: Response) => {
     try {
-        // All products
-
-        // Fetch all products from collection
-        const allProducts = await Product.find()
-                .select('name categories price inventory images')
-                .populate('categories', 'name');
-        // Send all the list product as a JSON
-        res.json(allProducts);
+      const { q, category } = req.query;
+  
+      // Build the query object
+      let query: any = {};
+      if (category) {
+        const categoryDoc = await Category.findOne({ name: category as string });
+        if (categoryDoc) {
+          query.categories = categoryDoc._id;
+        } else {
+          return res.status(400).json({ message: 'Invalid category name' });
+        }
+      }
+      if (q) {
+        query.name = { $regex: new RegExp(q as string, 'i') };
+      }
+  
+      // Fetch products based on the query, sorted by creation date
+      const products = await Product.find(query)
+        .sort({ createdAt: -1 }) // Sort by creation date in descending order
+        .select('name categories price images')
+        .populate('categories', 'name');
+  
+      // Send the list of products as a JSON response
+      res.json(products);
     } catch (error) {
-        console.error('Failed to list product:', error);
-        res.status(500).json({ message: "Failed to list product", error: (error as Error).message})
+      console.error('Failed to list products:', error);
+      res.status(500).json({ message: 'Failed to list products', error: (error as Error).message });
     }
-}
+  };
 
 // get a product
 
@@ -190,6 +162,7 @@ export const getProduct = async (req: Request, res: Response) => {
     }
 }
 
+
 // Update a product name
 
 export const updateProduct = [
@@ -197,7 +170,7 @@ export const updateProduct = [
     async (req: Request, res: Response) => {
     try {
         const { productId } = req.params;
-        const { name, price, categories, initialInventory }: ProductData = req.body;
+        const { name, price, categories }: ProductData = req.body;
 
         const productFound = await Product.findById(productId);
 
@@ -228,19 +201,7 @@ export const updateProduct = [
             productFound.categories = validCategoryIds;
         }
 
-        if (initialInventory) {
-            if (!productFound.inventory) {
-                productFound.inventory = {
-                    count: initialInventory.count || 1,
-                    status: initialInventory.status || 'In Stock'
-                };
-            } else {
-                if (initialInventory.count !== undefined) productFound.inventory.count = initialInventory.count;
-                if (initialInventory.status) productFound.inventory.status = initialInventory.status;
-            }
-        }
-
-        // Handle image updates
+        
 
         if (req.files && (req.files as Express.Multer.File[]).length > 0) {
             // Delete old images from cloudinary
@@ -300,25 +261,25 @@ export const deleteProduct = async (req: Request, res: Response) => {
 }
 
 // Update Inventory on Sale
-export const inventoryUpdateOnProduct = async (req: inventoryUpdateRequest, res: Response) => {
-    const { quantity } = req.body as { quantity: number }
+// export const inventoryUpdateOnProduct = async (req: inventoryUpdateRequest, res: Response) => {
+//     const { quantity } = req.body as { quantity: number }
 
-    try {
-        const product = await Product.findById(req.params.productId);
-        if (!product) {
-            return res.status(404).json({ message: "Product not found" });
-        }
-        if (product?.inventory?.count) {
-            product.inventory.count -= quantity;
-            product.inventory.status = product.inventory.count > 0 ? 'In Stock' : 'Out of Stock';
-        }
+//     try {
+//         const product = await Product.findById(req.params.productId);
+//         if (!product) {
+//             return res.status(404).json({ message: "Product not found" });
+//         }
+//         if (product?.inventory?.count) {
+//             product.inventory.count -= quantity;
+//             product.inventory.status = product.inventory.count > 0 ? 'In Stock' : 'Out of Stock';
+//         }
        
-        await product.save();
-        res.status(200).json({ message: "Inventory updated successfully", product });
-    } catch (error) {
-        console.error('Error updating inventory:', error);
-        res.status(500).json({ message: "Failed to update inventory", error: (error as Error).message });
-    }
-};
+//         await product.save();
+//         res.status(200).json({ message: "Inventory updated successfully", product });
+//     } catch (error) {
+//         console.error('Error updating inventory:', error);
+//         res.status(500).json({ message: "Failed to update inventory", error: (error as Error).message });
+//     }
+// };
 
 

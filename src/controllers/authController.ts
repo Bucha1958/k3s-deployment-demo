@@ -65,9 +65,10 @@ export const loginUser = async (req: Request, res: Response) => {
         if (!passOk) {
             return res.status(401).json({ message: "Invalid password" });
         } else {
-            jwt.sign({ id: userDoc._id, email: userDoc.email}, secret, {}, (err, token) => {
+            jwt.sign({ id: userDoc._id, email: userDoc.email, username: userDoc.username}, secret, {}, (err, token) => {
                 if (err) throw err;
                 res.cookie('token', token).json({
+                    username: userDoc.username,
                     id:userDoc._id,
                     email,
                 });

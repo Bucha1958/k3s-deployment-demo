@@ -11,7 +11,7 @@ import { authenticateToken } from '../middleware';
 const router = express.Router();
 
 // Create Category
-router.post('/categories', authenticateToken, createCategory);
+router.post('/categories', createCategory);
 // Get all categories
 router.get('/categories', getCategories);
 // Get a category
