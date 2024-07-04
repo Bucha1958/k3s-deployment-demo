@@ -2,13 +2,12 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import cookieParser from 'cookie-parser';
 import uploadRoutes from './routes/routeUpload';
-
-
-
 import { connectToDatabase } from './config/database';
 import productRoutes from './routes/productRoutes';
 import categoryRoutes from './routes/categoryRoutes';
 import authRoutes from "./routes/authRoutes";
+import path from 'path';
+
 
 const app = express();
 app.use(express.json());
@@ -18,6 +17,9 @@ app.use(cors({
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type,Authorization'
 }));
+
+
+
 app.use(cookieParser());
 app.use('/api', productRoutes);
 app.use('/api', categoryRoutes);
@@ -29,7 +31,14 @@ app.post('/api/logout', (req: Request, res: Response) => {
     res.cookie('token', '').json('ok');
 })
 
-  
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, 'build')));
+
+// The catch-all handler: for any request that doesn't match one above, send back index.html
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
   
 connectToDatabase()
 
