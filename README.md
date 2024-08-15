@@ -1,63 +1,27 @@
-E-Commerce Backend
-Welcome to the E-Commerce backend project! This project is a Node.js application written in TypeScript designed to power an e-commerce platform. It handles all server-side logic, including user authentication, product management, and order processing.
+# E-Commerce Backend
 
-Features
-User Authentication: Register, login, and manage user accounts.
-Product Management: Create, update, delete, and view products.
-Order Processing: Place and track orders.
-Custom Size Input: Allows users to enter custom sizes for products.
-Getting Started
-Prerequisites
-Make sure you have the following installed:
+Welcome to the **E-Commerce** backend project! This Node.js application, written in TypeScript, is designed to power an e-commerce platform. It manages server-side logic, including user authentication, product management, and order processing.
 
-Node.js (v14 or later)
-npm or yarn
-Installation
-Clone the repository:
+## Features
 
-bash
-Copy code
-git clone https://github.com/yourusername/e-commerce.git
-cd e-commerce
-Install dependencies:
+- **User Authentication**: Register, log in, and manage user accounts.
+- **Product Management**: Create, update, delete, and view products.
+- **Order Processing**: Place and track orders.
+- **Custom Size Input**: Allows users to enter custom sizes for products.
 
-bash
-Copy code
-npm install
-# or
-yarn install
-Create a .env file in the root directory and add the required environment variables. You can use the provided .env.example as a template.
+## Getting Started
 
-Run the application:
+### Prerequisites
 
-bash
-Copy code
-npm start
-# or
-yarn start
-The server will start on http://localhost:3000 by default.
+Ensure you have the following installed:
 
-API Documentation
-The API documentation is available at http://localhost:3000/docs. You can use it to explore the available endpoints and test them.
+- [Node.js](https://nodejs.org/) (v14 or later)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 
-Running Tests
-To run the test suite:
+### Installation
 
-bash
-Copy code
-npm test
-# or
-yarn test
-Contributing
-Contributions are welcome! Please follow these steps:
+1. **Clone the repository**:
 
-Fork the repository.
-Create a new branch (git checkout -b feature-branch).
-Make your changes and commit (git commit -am 'Add new feature').
-Push to the branch (git push origin feature-branch).
-Create a new Pull Request.
-License
-This project is licensed under the MIT License. See the LICENSE file for details.
-
-Contact
-For any questions or suggestions, feel free to reach out to me at okoriemmadu@gmail.com.
+   ```bash
+   git clone https://github.com/yourusername/e-commerce.git
+   cd e-commerce
