@@ -18,7 +18,7 @@ const storage = new CloudinaryStorage({
   params: async (req, file) => {
     return {
       folder: 'ecommerce-images', // Folder name in Cloudinary
-      format: 'jpeg' || 'png' || 'jpg', // Supported formats
+      format: ['jpeg', 'png', 'jpg'], // Supported formats
       public_id: file.originalname.split('.')[0], // Use the original filename without extension as public ID
     };
   },
