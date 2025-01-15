@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  frontend:
+    build:
+      context: ./OkxeelFashion  # Path to your frontend directory
+    ports:
+      - "5173:5173"  # Exposing the port used by your frontend
+    environment:
+      - REACT_APP_API_URL=http://auth-service:4000/api/auth  # Backend auth service
+      - REACT_APP_GENERAL_API_URL=http://general-service:3000/api  # General backend service
+    depends_on:
+      - auth-service
+      - general-service
+
+  auth-service:
+    build:
+      context: ./auth-service  # Path to your auth-service directory
+    ports:
+      - "4000:4000"  # Exposing the port for auth service
+    environment:
+      # Cloudinary URL
+    depends_on:
+      - general-service
+
+  general-service:
+    build:
+      context: ./general-service  # Path to your general-service directory
+    ports:
+      - "3000:3000"  # Exposing the port for general service
+    environment:
+      -  # Remote MongoDB URI
+    depends_on:
+      - auth-service
+
