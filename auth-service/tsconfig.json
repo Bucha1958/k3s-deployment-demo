@@ -15,7 +15,6 @@
     },
     "include": [
       "auth-service/src/**/*.ts",               // Include TypeScript files in `auth-service`
-      "general-service/src/**/*.ts",            // Include TypeScript files in `general-service`
       "config/**/*.ts",                          // Include shared `config` folder
       "src/types/**/*.d.ts"
     ],
