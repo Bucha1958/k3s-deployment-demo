@@ -9,12 +9,13 @@ RUN npm install
 
 # Copy all source files
 COPY . .
+COPY ../tsconfig.json ./tsconfig.json 
 
 # Build TypeScript into dist/
 RUN npm run build
 
 # Expose the port your app runs on (update if it's different)
-EXPOSE 3000
+EXPOSE 4000
 
 # Run the compiled app
 CMD ["npm", "run", "serve"]
