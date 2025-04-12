@@ -6,11 +6,10 @@ WORKDIR /app
 
 # Install only production dependencies
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm install
 
 # Copy source files
 COPY . .
-COPY ../tsconfig.json ./tsconfig.json 
 
 # Expose service port
 EXPOSE 3000

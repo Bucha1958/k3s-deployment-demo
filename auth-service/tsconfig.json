@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+      "target": "ES2020",                        // Specifies the JavaScript language version
+      "module": "CommonJS",                      // Module system for Node.js
+      "rootDir": "src",                            // Root directory of the project
+      "outDir": "./dist",                        // Output directory for compiled files
+      "strict": true,                            // Enable strict type-checking options
+      "esModuleInterop": true,                   // Compatibility with CommonJS modules
+      "forceConsistentCasingInFileNames": true,  // Ensures consistent casing in file names
+      "skipLibCheck": true,                      // Skip type checking of declaration files
+      "baseUrl": ".",                            // Base URL for resolving non-relative module imports
+      "paths": {                                 // Aliases for shared resources
+        "@config/*": ["config/*"]
+      }
+    },
+    "include": [
+      "auth-service/src/**/*.ts",               // Include TypeScript files in `auth-service`
+      "general-service/src/**/*.ts",            // Include TypeScript files in `general-service`
+      "config/**/*.ts",                          // Include shared `config` folder
+      "src/types/**/*.d.ts"
+    ],
+    "exclude": [
+      "node_modules",                            // Exclude node_modules to avoid conflicts
+      "dist"                                     // Exclude compiled files
+    ]
+  }
