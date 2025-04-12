@@ -24,7 +24,7 @@ jobs:
 
       - name: Build and tag Docker image
         run: |
-          cd auth-service
+          cd general-service
           docker build -t ${{ secrets.DOCKER_USERNAME }}/general-service:latest -t ${{ secrets.DOCKER_USERNAME }}/general-service:${{ steps.tag.outputs.tag }} .
 
       - name: Push Docker images
