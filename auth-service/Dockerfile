@@ -1,28 +1,20 @@
-# auth-service/Dockerfile
-# FROM node:18-alpine
-# WORKDIR /app
-# COPY package.json package-lock.json ./
-# RUN npm install
-# COPY . .
-# EXPOSE 4000
-# CMD ["npm", "run", "start"]
-
-# Use a minimal Node base image
 FROM node:18-alpine
 
-# Create app directory
+# Set working directory
 WORKDIR /app
 
-# Install only production dependencies
+# Copy dependency files and install
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm install
 
-# Copy source files
+# Copy all source files
 COPY . .
 
-# Expose service port
-EXPOSE 4000
+# Build TypeScript into dist/
+RUN npm run build
 
-# Use node directly in production
-CMD ["node", "dist/index.js"]
+# Expose the port your app runs on (update if it's different)
+EXPOSE 3000
 
+# Run the compiled app
+CMD ["npm", "run", "serve"]
