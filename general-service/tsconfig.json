@@ -22,4 +22,4 @@
       "node_modules",                            // Exclude node_modules to avoid conflicts
       "dist"                                     // Exclude compiled files
     ]
-  }
+}
