@@ -27,7 +27,6 @@ WORKDIR /app
 COPY package*.json ./
 COPY tsconfig.json ./
 COPY src ./src
-COPY config ./config
 
 # Install dependencies
 RUN npm install
