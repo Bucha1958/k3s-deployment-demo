@@ -1,18 +1,39 @@
-# general-service/Dockerfile
-FROM node:18-alpine
+# # general-service/Dockerfile
+# FROM node:18-alpine
 
-# Create app directory
+# # Create app directory
+# WORKDIR /app
+
+# # Install only production dependencies
+# COPY package.json package-lock.json ./
+# RUN npm install
+
+# # Copy source files
+# COPY . .
+
+# # Expose service port
+# EXPOSE 3000
+
+# # Use node directly in production
+# CMD ["npm", "run", "serve"]
+
+# Start from Node.js image
+FROM node:18
+
+# Set working directory inside container
 WORKDIR /app
 
-# Install only production dependencies
-COPY package.json package-lock.json ./
+# Copy files into container
+COPY package*.json ./
+COPY tsconfig.json ./
+COPY src ./src
+COPY config ./config
+
+# Install dependencies
 RUN npm install
 
-# Copy source files
-COPY . .
+# Build the TypeScript project
+RUN npm run build
 
-# Expose service port
-EXPOSE 3000
-
-# Use node directly in production
+# Start the app
 CMD ["npm", "run", "serve"]
