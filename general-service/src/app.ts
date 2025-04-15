@@ -5,6 +5,8 @@ import uploadRoutes from './routes/routeUpload';
 import { connectToDatabase } from './config/database';
 import productRoutes from './routes/productRoutes';
 import categoryRoutes from './routes/categoryRoutes';
+import dotenv from 'dotenv';
+dotenv.config();
 
 import path from 'path';
 
@@ -12,7 +14,7 @@ import path from 'path';
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.ORIGIN,
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type,Authorization'
