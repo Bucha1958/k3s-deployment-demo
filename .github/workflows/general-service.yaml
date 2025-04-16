@@ -2,8 +2,8 @@ name: General Service CI
 
 on:
   push:
-    paths:
-      - 'general-service/**'
+    branches:
+      - master
 
 jobs:
   build-and-push:
