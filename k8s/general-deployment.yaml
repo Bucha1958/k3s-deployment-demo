@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: general-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: general-service
+  template:
+    metadata:
+      labels:
+        app: general-service
+    spec:
+      containers:
+        - name: general-service
+          image: bucha1958/general-service:latest
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: myConfig
+            - secretRef:
+                name: mySecret
