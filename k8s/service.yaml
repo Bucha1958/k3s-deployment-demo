@@ -11,7 +11,7 @@ spec:
       targetPort: 4000
   type: ClusterIP
 
-  ---
+---
 
 apiVersion: v1
 kind: Service
