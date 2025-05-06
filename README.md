@@ -1,27 +1,49 @@
-# E-Commerce Backend
+# Okxeel Microservice Deployment on K3s with CI/CD
 
-Welcome to the **E-Commerce** backend project! This Node.js application, written in TypeScript, is designed to power an e-commerce platform. It manages server-side logic, including user authentication, product management, and order processing.
+This project demonstrates a full microservices deployment pipeline using Docker, GitHub Actions, and a K3s Kubernetes cluster. It includes two backend services (`auth-service` and `general-service`) containerized with Docker and deployed via Kubernetes manifests. The services were originally tested using Docker Compose locally, and then moved into production-like environments using a multi-node K3s cluster.
 
-## Features
+---
 
-- **User Authentication**: Register, log in, and manage user accounts.
-- **Product Management**: Create, update, delete, and view products.
-- **Order Processing**: Place and track orders.
-- **Custom Size Input**: Allows users to enter custom sizes for products.
+## 📦 Project Structure
 
-## Getting Started
+```bash
+okxeel-microservice/
+├── .github/workflows/        # GitHub Actions CI/CD pipelines
+│   └── okxeel-service.yaml
+├── auth-service/             # Authentication microservice (Node.js + TypeScript)
+├── general-service/          # General business logic microservice (Node.js + TypeScript)
+├── docker-compose.yml        # Local development setup
+├── k8s/                      # Kubernetes manifests for deployment
+├── README.md
+```
 
-### Prerequisites
+## 🚀 Overview
 
-Ensure you have the following installed:
+This project focuses on setting up, deploying, and managing microservices in a production-simulated environment using the following:
 
-- [Node.js](https://nodejs.org/) (v14 or later)
-- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+- **K3s Kubernetes Cluster** with 1 master and 2 workers
+- **GitHub Actions CI/CD** that builds Docker images and deploys to K3s
+- **Docker Compose** for local development testing
+- **MongoDB** database integration (local and cluster-compatible)
+- **CoreDNS and Networking fixes** in K3s for service discovery and stable connectivity
 
-### Installation
+---
 
-1. **Clone the repository**:
+## ⚙️ Tech Stack
 
-   ```bash
-   git clone https://github.com/yourusername/e-commerce.git
-   cd e-commerce
+- Node.js (TypeScript)
+- MongoDB
+- Docker & Docker Compose
+- GitHub Actions (CI/CD)
+- K3s Kubernetes (multi-node)
+- kubectl
+
+---
+
+## 🧪 Local Development
+
+To run the services locally with Docker Compose:
+
+```bash
+docker-compose up --build
+
