@@ -1,0 +1,26 @@
+# otel-agent-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-agent-config
+  namespace: default
+data:
+  config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          http:
+
+    exporters:
+      logging:
+        loglevel: debug
+      jaeger:
+        endpoint: jaeger.default.svc.cluster.local:14250
+        tls:
+          insecure: true
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [logging, jaeger]
